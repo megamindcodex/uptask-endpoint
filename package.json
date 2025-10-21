@@ -1,0 +1,23 @@
+{
+  "name": "uptask-endpoint",
+  "version": "1.0.0",
+  "description": "uptask is an online to-d- website application where user data and activities are stored in a database",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "serve": "nodemon src/server.js"
+  },
+  "author": "megamind",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
