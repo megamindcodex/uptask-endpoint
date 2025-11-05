@@ -12,8 +12,8 @@ export const getTaskCollection = async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: "User not found" })
         }
-        const taskCollection = user.taskCollection || []
-        return res.status(200).json({ taskCollection })
+        const taskCollections = user.taskCollections || []
+        return res.status(200).json({ taskCollections })
 
     } catch (err) {
         console.error("Error fetching task collection:", err)

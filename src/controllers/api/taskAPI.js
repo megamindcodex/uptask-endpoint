@@ -24,7 +24,7 @@ export const addTask = async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: "User not found" })
         }
-        const taskColllections = user.taskCollection || []
+        const taskColllections = user.taskCollections || []
         const collection = taskColllections.find(col => col.id === collectionId) // find collection by id with the array find method using the id provided in the request body
         if (!collection) {
             return res.status(404).json({ error: "Collection not found" })
@@ -69,7 +69,7 @@ export const getAllTasksInCollection = async (req, res,) => {
             return res.status(404).json({ error: "User not Found" })
         }
 
-        const taskCollections = user.taskCollection || []
+        const taskCollections = user.taskCollections || []
         const collection = taskCollections.find(col => col.id === collectionId)
         if (!collection) {
             return res.status(404).json({ error: "Collection not Found" })
@@ -114,7 +114,7 @@ export const editTask = async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: "User not found" })
         }
-        const taskColllections = user.taskCollection || []
+        const taskColllections = user.taskCollections || []
         const collection = taskColllections.find(col => col.id === collectionId) // find collection by id with the array find method using the id provided in the request body
         if (!collection) {
             return res.status(404).json({ error: "Collection not found" })
@@ -163,7 +163,7 @@ export const deleteTask = async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: "User not found" })
         }
-        const taskColllections = user.taskCollection || []
+        const taskColllections = user.taskCollections || []
         const collection = taskColllections.find(col => col.id === collectionId) // find collection by id with the array find method using the id provided in the request body
         if (!collection) {
             return res.status(404).json({ error: "Collection not found" })
@@ -214,7 +214,7 @@ export const toggleTaskCompletion = async (req, res) => {
             return res.status(404).json({ error: "User Not Found" })
         }
 
-        const taskCollection = user.taskCollection || []
+        const taskCollection = user.taskCollections || []
         const collection = taskCollection.find(col => col.id === collectionId)
         if (!collection) {
             return res.status(404).json({ error: "Collection Not Found" })

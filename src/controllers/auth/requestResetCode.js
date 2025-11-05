@@ -6,6 +6,7 @@ import User from "../../models/user.js"
 export const request_password_reset_code = async (req, res) => {
     try {
         const { email } = req.body;
+        console.log(email)
         if (!email) {
             return res.status(400).json({ errorMsg: "Missing email field in request body" });
         }
@@ -13,7 +14,7 @@ export const request_password_reset_code = async (req, res) => {
         const user = await User.findOne({ email })
         if (!user) {
             console.log("No user found with the provided email:", email);
-            return res.status(404).json({ errorMsg: "No user found with the provided email" });
+            return res.status(404).json({ message: "No user found with the provided email" });
         }
 
         const resetCode = await generate_reset_code();
@@ -30,7 +31,7 @@ export const request_password_reset_code = async (req, res) => {
         res.status(200).json({ message: "Password reset code sent to email successfully" });
     } catch (err) {
         console.error("❌ Error requesting password reset code:", err);
-        res.status(500).json({ message: "Server error. something went wrong." });
+        return res.status(500).json({ message: "Server error. something went wrong." });
     }
 }
 
@@ -38,7 +39,7 @@ export const request_password_reset_code = async (req, res) => {
 const generate_reset_code = async () => {
     // Generate a random 6-digit code 
     const code = crypto.randomInt(100000, 999999).toString();
-    console.log(code);
+    // console.log(code);
     return code;
 }
 

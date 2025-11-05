@@ -23,7 +23,7 @@ export const createNewCollection = async (req, res) => {
             tasks: [],
         }
 
-        user.taskCollection.push(newCollection)
+        user.taskCollections.push(newCollection)
         await user.save()
 
         return res.status(201).json({ message: "New collection created", collection: newCollection })
@@ -50,7 +50,7 @@ export const get_all_colletions = async (req, res) => {
             return res.status(404).json({ error: "User not found" })
         }
 
-        const taskCollections = user.taskCollection || []
+        const taskCollections = user.taskCollections || []
 
         return res.status(200).json({ collections: taskCollections })
 
@@ -89,7 +89,7 @@ export const editCollection = async (req, res) => {
             return res.status(404).json({ error: "User not found" })
         }
         // console.log(`collectionId: ${collectionId}`)
-        const taskColllections = user.taskCollection || []
+        const taskColllections = user.taskCollections || []
         const collection = taskColllections.find(col => col.id === collectionId) // find collection by id with the array find method using the id provided in the request body
         if (!collection) {
             return res.status(404).json({ error: "Collection not found" })
@@ -127,7 +127,7 @@ export const deleteCollection = async (req, res) => {
         }
 
         // get collections from user
-        const taskColllections = user.taskCollection || []
+        const taskColllections = user.taskCollections || []
 
         // Find collection index
         const collectionIndex = taskColllections.findIndex(col => col.id === collectionId) // find collection index by id with the array findIndex method using the id provided in the request body
@@ -139,7 +139,7 @@ export const deleteCollection = async (req, res) => {
 
         // Remove collection
         taskColllections.splice(collectionIndex, 1) // remove the collection from the array using splice
-        user.taskCollection = taskColllections // update the user's taskCollection
+        user.taskCollections = taskColllections // update the user's taskCollection
         await user.save()
 
         return res.status(200).json({ message: "Collection deleted Successfully" })

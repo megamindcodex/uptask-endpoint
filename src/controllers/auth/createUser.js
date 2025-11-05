@@ -7,7 +7,7 @@ import { createAccessToken } from "../../middleware/jwtAuth.js"
 export const createUser = async (req, res) => {
 
     try {
-        // console.log(req.body);
+        console.log(req.body);
         const { userName, email, password } = req.body;
         // Check if user email already exists
         const emailExist = await User.findOne({ email });
@@ -20,14 +20,21 @@ export const createUser = async (req, res) => {
             return res.status(400).json({ message: "This User Name is in use" });
         }
 
-        const user = { userName, email, password };
 
+        const newUserObject = {
+            userName: userName,
+            email: email,
+            password: password,
+            taskCollections: [],
+            _resetPasswordCode: "0000",
+            _resetCodeExpires: "0000",
+        }
 
         // Create a new user
-        const newUser = new User(user);
+        const newUser = await User.create(newUserObject)
 
         if (!newUser) {
-            return res.status(400).json({ message: "Something went wrong" });
+            return res.status(500).json({ message: "Something went wrong" });
         }
 
 

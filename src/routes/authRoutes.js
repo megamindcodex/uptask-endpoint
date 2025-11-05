@@ -4,6 +4,7 @@ import { createUser } from "../controllers/auth/createUser.js";
 import { loginUser } from "../controllers/auth/loginUser.js";
 import { request_password_reset_code } from "../controllers/auth/requestResetCode.js";
 import { resetPassword } from "../controllers/auth/resetPassword.js"
+import { verify_resetCode } from "../controllers/auth/verifyResetCode.js";
 
 const router = express.Router();
 
@@ -11,10 +12,13 @@ const router = express.Router();
 router.post("/register", createUser);
 
 // Route to login a user
-router.post("/user-login", loginUser);
+router.post("/login", loginUser);
 
 // Route to request password reset code
 router.post("/request-password-reset-code", request_password_reset_code);
+
+// Route to request password reset code
+router.post("/verify-reset-code", verify_resetCode)
 
 // Route to reset user password
 router.post("/reset-password", resetPassword)

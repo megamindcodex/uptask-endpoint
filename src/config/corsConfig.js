@@ -1,7 +1,10 @@
 import cors from "cors";
 
 export const corsConfig = () => {
-    const allowedOrigins = ["http://localhost:3000"];
+    const allowedOrigins = [
+        "http://localhost:3000",
+        "http://localhost:5173"
+    ];
 
     const corsOptions = {
         origin: (origin, callback) => {

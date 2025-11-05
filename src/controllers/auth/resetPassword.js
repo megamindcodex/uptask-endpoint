@@ -1,22 +1,19 @@
-// Loigic to reset password for a User
+// Logic to reset password for a User
 
 import User from "../../models/user.js"
 
 
 export const resetPassword = async (req, res) => {
     try {
-        const { email, newPassword, resetCode } = req.body
+        // console.log(req.body)
+        const { email, newPassword } = req.body
         if (!email) {
-            // console.log("")
+            // console.log()
             res.status(400).json({ message: "Missing email Field" })
         }
         if (!newPassword) {
             // console.log()
             res.status(400).json({ message: "Missing newPassword Field" })
-        }
-        if (!resetCode) {
-            // console.log()
-            res.status(400), json({ message: "Missing resetCode Field" })
         }
 
         const user = await User.findOne({ email })
@@ -31,25 +28,19 @@ export const resetPassword = async (req, res) => {
         }
 
 
-        if (user._resetPasswordCode !== resetCode) {
-            // console.log("Incorrect Reset Code")
-            return res.status(400).json({ message: "Incorrect Reset Code!" })
-        }
+
 
         // check if resetcode is expired
-        if (user._resetCodeExpires < Date.now()) {
-            // console.log("Reset code has expired")
-            return res.status(400).json({ message: "Reset code has expired, Resquest a new code" })
-        }
+        // if (user._resetCodeExpires < Date.now()) {
+        //     // console.log("Reset code has expired")
+        //     return res.status(400).json({ message: "Reset code has expired, Resquest a new code" })
+        // }
 
         user.password = newPassword
-        user._resetPasswordCode = null
-        user._resetCodeExpires = null
-
         await user.save()
 
 
-        res.status(200).json({ message: "Password reset successfully" })
+        return res.status(200).json({ message: "Password reset successfully" })
 
     } catch (err) {
         console.error("Error resesting User Password", err)
