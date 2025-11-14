@@ -39,13 +39,16 @@ export const verifyAccessToken = (req, res, next) => {
     try {
         const jwt_secret = process.env.JWT_SECRET
         const authHeader = req.headers["authorization"];
-        // console.log(`authHeader: ${authHeader}`)
+        // console.log(authHeader)
+        // console.log(req.headers)
         if (!authHeader) {
+            console.log("not authorized, missing authorization header")
             return res.status(401).json({ message: "not authorized, missing authorization header" });
         }
 
         const token = authHeader.split(" ")[1]; // Assuming "Bearer <token>"
         if (!token) {
+            console.log("not authorised, msissing access token")
             return res.status(401).json({ message: "not authorized, missing access token" });
         }
 

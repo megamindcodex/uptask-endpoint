@@ -8,41 +8,51 @@ import { checkTaskCompletion } from "../../utils/checkTaskCompletion.js"
 // Add a new task to a specific collection
 export const addTask = async (req, res) => {
     try {
-        const { userName, collectionId, content } = req.body
-        if (!userName) {
-            return res.status(400).json({ error: "Missing userName parameter" })
+        // console.log(req.body)
+        const { content, note, collectionId } = req.body
+        // console.log(`content: ${content}, note: ${note}, collectionId: ${collectionId}`)
+
+
+        if (!content) {
+            return res.status(400).json({ message: "Missing taskContent parameter" })
+        }
+        if (note === undefined) {
+            return res.status(400).json({ message: "Missing note parameter" })
         }
         if (!collectionId) {
-            return res.status(400).json({ error: "Missing collectionId parameter" })
-        }
-        if (!content) {
-            return res.status(400).json({ error: "Missing taskContent parameter" })
+            return res.status(400).json({ message: "Missing collectionId parameter" })
         }
 
+
+        const userId = req.userId
+
         // Find user and collection 
-        const user = await User.findOne({ userName: userName })
+        const user = await User.findById(userId)
         if (!user) {
-            return res.status(404).json({ error: "User not found" })
+            console.log("User not found")
+            return res.status(404).json({ message: "User not found" })
         }
         const taskColllections = user.taskCollections || []
         const collection = taskColllections.find(col => col.id === collectionId) // find collection by id with the array find method using the id provided in the request body
         if (!collection) {
-            return res.status(404).json({ error: "Collection not found" })
+            console.log("collection not found")
+            return res.status(404).json({ message: "Collection not found" })
         }
         // add new task to the collection
         const newTask = {
             content: content,
             checked: false,
-            id: new mongoose.Types.ObjectId().toString(), // generate a unique id for the task and convert it to string
+            note: note,
+            // id: new mongoose.Types.ObjectId().toString(), // generate a unique id for the task and convert it to string
         }
 
         collection.tasks.push(newTask)
         await user.save()
 
-        return res.status(201).json({ message: `New task added to collection ${collectionId}`, task: newTask })
+        return res.status(201).json({ message: `New task added to collection ${collectionId}` })
     } catch (err) {
         console.error("Error adding new task:", err)
-        res.status(500).json({ error: "Internal server error" })
+        res.status(500).json({ message: "Internal server error" })
     }
 }
 
@@ -54,33 +64,36 @@ export const addTask = async (req, res) => {
 // Get All task in a specific collection 
 export const getAllTasksInCollection = async (req, res,) => {
     try {
-        const userName = req.query.userName
+        // console.log(`CollectionId: ${req.query.collectionId}`)
         const collectionId = req.query.collectionId
-        if (!userName) {
-            return res.status(400).json({ error: "Missing userName parameter" })
-        }
+
         if (!collectionId) {
-            return res.status(400).json({ error: "Missing collectionId parameter" })
+            return res.status(400).json({ message: "Missing collectionId parameter" })
         }
 
+
+        const userId = req.userId
+
+
         // Find user and collection
-        const user = await User.findOne({ userName: userName })
+        const user = await User.findOne({ _id: userId })
         if (!user) {
-            return res.status(404).json({ error: "User not Found" })
+            return res.status(404).json({ message: "User not Found" })
         }
+
 
         const taskCollections = user.taskCollections || []
         const collection = taskCollections.find(col => col.id === collectionId)
         if (!collection) {
-            return res.status(404).json({ error: "Collection not Found" })
+            return res.status(404).json({ message: "Collection not Found" })
         }
 
         console.log(`All tasks in collection ${collectionId}:`, collection.tasks)
-        return res.status(200).json({ tasks: collection.tasks })
+        return res.status(200).json({ tasks: collection.tasks, message: `All task in collection ${collectionId} Fetched` })
 
     } catch (err) {
         console.error("Error getting all tasks in collection:", err)
-        res.status(500).json({ error: "Internal server error" })
+        res.status(500).json({ message: "Internal server error" })
     }
 }
 
@@ -93,26 +106,28 @@ export const getAllTasksInCollection = async (req, res,) => {
 export const editTask = async (req, res) => {
     try {
 
-        const { userName, collectionId, taskId, newContent } = req.body
+        const { newContent, newNote } = req.body
+        const collectionId = req.query.collectionId
+        const taskId = req.query.taskId
 
-        // console.log(`userName: ${userName}, collectionId: ${collectionId}, taskId: ${taskId}, newContent: ${newContent}`)
-        if (!userName) {
-            return res.status(400).json({ error: "Missing userName parameter" })
-        }
+        // console.log(collectionId: ${collectionId}, taskId: ${taskId}, newContent: ${newContent}`)
+
         if (!collectionId) {
-            return res.status(400).json({ error: "Missing collectionId parameter" })
+            return res.status(400).json({ message: "Missing collectionId parameter" })
         }
         if (!taskId) {
-            return res.status(400).json({ error: "Missing taskId parameter" })
+            return res.status(400).json({ message: "Missing taskId parameter" })
         }
         if (!newContent) {
-            return res.status(400).json({ error: "Missing newContent parameter" })
+            return res.status(400).json({ message: "Missing newContent parameter" })
         }
 
+        const userId = req.userId
+
         // Find user and collection
-        const user = await User.findOne({ userName: userName })
+        const user = await User.findById(userId)
         if (!user) {
-            return res.status(404).json({ error: "User not found" })
+            return res.status(404).json({ message: "User not found" })
         }
         const taskColllections = user.taskCollections || []
         const collection = taskColllections.find(col => col.id === collectionId) // find collection by id with the array find method using the id provided in the request body
@@ -124,18 +139,19 @@ export const editTask = async (req, res) => {
         const tasks = collection.tasks || []
         const task = tasks.find(t => t.id === taskId) // find task by id with the array find method using the id provided in the request body
         if (!task) {
-            return res.status(404).json({ error: "Task not found" })
+            return res.status(404).json({ message: "Task not found" })
         }
 
 
         // Update task content
         task.content = newContent
+        task.note = newNote
         await user.save()
         return res.status(200).json({ message: "Task updated", task })
 
     } catch (err) {
         console.error("Error editing task:", err)
-        res.status(500).json({ error: "Internal server error" })
+        res.status(500).json({ message: "Internal server error" })
     }
 }
 
@@ -147,32 +163,32 @@ export const editTask = async (req, res) => {
 // Delete a task from a specific collection
 export const deleteTask = async (req, res) => {
     try {
-        const { userName, collectionId, taskId } = req.query
-        if (!userName) {
-            return res.status(400).json({ error: "Missing userName parameter" })
-        }
+        const { taskId, collectionId } = req.query
+
         if (!collectionId) {
-            return res.status(400).json({ error: "Missing collectionId parameter" })
+            return res.status(400).json({ message: "Missing collectionId parameter" })
         }
         if (!taskId) {
-            return res.status(400).json({ error: "Missing taskId parameter" })
+            return res.status(400).json({ message: "Missing taskId parameter" })
         }
 
+        const userId = req.userId
+
         // Find user and collection
-        const user = await User.findOne({ userName: userName })
+        const user = await User.findById(userId)
         if (!user) {
-            return res.status(404).json({ error: "User not found" })
+            return res.status(404).json({ message: "User not found" })
         }
         const taskColllections = user.taskCollections || []
         const collection = taskColllections.find(col => col.id === collectionId) // find collection by id with the array find method using the id provided in the request body
         if (!collection) {
-            return res.status(404).json({ error: "Collection not found" })
+            return res.status(404).json({ message: "Collection not found" })
         }
         // Find the task element within the collection
         const tasks = collection.tasks || []
         const taskIndex = tasks.findIndex(t => t.id === taskId) // find task index by id with the array findIndex method using the id provided in the request body
         if (taskIndex === -1) {
-            return res.status(404).json({ error: "Task not found" })
+            return res.status(404).json({ message: "Task not found" })
         }
 
         // Remove task from the collection
@@ -183,7 +199,7 @@ export const deleteTask = async (req, res) => {
 
     } catch (err) {
         console.error("Error deleting task:", err)
-        res.status(500).json({ error: "Internal server error" })
+        res.status(500).json({ message: "Internal server error" })
     }
 }
 
@@ -193,63 +209,39 @@ export const deleteTask = async (req, res) => {
 
 
 // Toggle task completion status
-export const toggleTaskCompletion = async (req, res) => {
+export const toggleTaskTick = async (req, res) => {
     try {
-        const { userName, collectionId, taskId, checked } = req.body
-        if (!userName) {
-            return res.status(400).json({ error: "Missing userName parameter" })
-        }
+        const { collectionId, taskId } = req.query
+
         if (!collectionId) {
-            return res.status(400).json({ error: "Missing collectionId parameters" })
+            return res.status(400).json({ message: "Missing collectionId parameter" })
         }
         if (!taskId) {
-            return res.status(400).json({ error: "Missing taskId parameters" })
-        }
-        if (!checked) {
-            return res.status(400).json({ error: "Missing checked parameters" })
+            return res.status(400).json({ message: "Missing taskId parameter" })
         }
 
-        const user = await User.findOne({ userName: userName })
-        if (!user) {
-            return res.status(404).json({ error: "User Not Found" })
-        }
+        const userId = req.userId
+        const user = await User.findById(userId)
+        if (!user) return res.status(404).json({ message: "User Not Found" })
 
-        const taskCollection = user.taskCollections || []
-        const collection = taskCollection.find(col => col.id === collectionId)
-        if (!collection) {
-            return res.status(404).json({ error: "Collection Not Found" })
-        }
+        const collection = user.taskCollections.find(col => col.id === collectionId)
+        if (!collection) return res.status(404).json({ message: "Collection Not Found" })
 
-        const tasks = collection.tasks || []
-        const task = tasks.find(t => t.id === taskId)
-        if (!task) {
-            return res.status(404).json({ error: "Fask Not Found" })
-        }
+        const task = collection.tasks.find(t => t.id === taskId)
+        if (!task) return res.status(404).json({ message: "Task Not Found" })
 
-        task.checked = checked
-
-        // console.log(collection.tasks)
-
-        const all_task_checked_Array = collection.tasks.map(c => ({ checked: c.checked })) //This works because: map() loops through each object,You return a new object each time, containing just the property you want.
-
-        console.log(all_task_checked_Array)
-
-        const taskCompleted = await checkTaskCompletion(all_task_checked_Array)
-
-        // console.log(`data type of taskCompleted is ${typeof (taskCompleted)}`)
-
-
-        collection.all_task_completed = taskCompleted
+        // THE FIX
+        task.tick = !task.tick
 
         await user.save()
 
-        // console.log(task.checked)
-        return res.status(200).json({ message: `task element toggled to ${task.checked} ` })
+        return res.status(200).json({ message: `task property toggled to ${task.tick}` })
     } catch (err) {
         console.error("Error toggling task completion:", err)
-        res.status(500).json({ error: "Internal server error" })
+        res.status(500).json({ message: "Internal server error" })
     }
 }
+
 
 
 

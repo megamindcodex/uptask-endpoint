@@ -13,7 +13,7 @@ import {
     addTask,
     editTask,
     deleteTask,
-    toggleTaskCompletion,
+    toggleTaskTick,
     getAllTasksInCollection,
 } from "../controllers/api/taskAPI.js";
 
@@ -56,7 +56,7 @@ router.put("/edit-task", verifyAccessToken, editTask);
 router.delete("/delete-task", verifyAccessToken, deleteTask);
 
 // Route to Toggle Task Completion
-router.put("/toggle-task-checked", verifyAccessToken, toggleTaskCompletion)
+router.put("/toggle-task-tick", verifyAccessToken, toggleTaskTick)
 
 // Route to change index position of an individual task element
 // router.put("/change-task-position", changeTaskIndex) //  //not usable for now
