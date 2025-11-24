@@ -28,7 +28,7 @@ export const request_password_reset_code = async (req, res) => {
         user._resetCodeExpires = Date.now() + 60 * 1000
         await user.save();
 
-        return res.status(200).json({ message: "Password reset code sent to email successfully" });
+        return res.status(200).json({ message: "Password reset code sent to email" });
     } catch (err) {
         console.error("❌ Error requesting password reset code:", err);
         return res.status(500).json({ message: "Server error. something went wrong." });

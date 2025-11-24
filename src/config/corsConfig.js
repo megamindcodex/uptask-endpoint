@@ -3,7 +3,8 @@ import cors from "cors";
 export const corsConfig = () => {
     const allowedOrigins = [
         "http://localhost:3000",
-        "http://localhost:5173"
+        "http://localhost:5173",
+        "https://uptask-cl.netlify.app"
     ];
 
     const corsOptions = {

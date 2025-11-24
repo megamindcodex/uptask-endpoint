@@ -39,7 +39,7 @@ export const createUser = async (req, res) => {
 
 
         // Generate access token
-        const accessToken = createAccessToken({ userId: newUser._id })
+        const accessToken = createAccessToken(newUser._id)
         if (!accessToken) {
             console.log("Failed to create access token")
             return res.status(500).json({ message: "somthing went wrong!, try again" })

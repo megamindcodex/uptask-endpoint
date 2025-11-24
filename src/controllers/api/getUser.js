@@ -3,8 +3,8 @@ import User from "../../models/user.js"
 
 export const getUserData = async (req, res) => {
     try {
-        // console.log(req.userId)
         const userId = req.userId
+        // console.log(userId)
 
         // const userName = req.query.userName
         // if (!userName) {
