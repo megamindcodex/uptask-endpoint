@@ -6,15 +6,18 @@
   "main": "server.js",
   "scripts": {
     "serve": "nodemon src/server.js",
-     "start": "node src/server.js"
+    "worker": "nodemon src/workers/emailWorker.js",
+    "start": "node src/server.js"
   },
   "author": "megamind",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^2.2.0",
+    "bullmq": "^5.65.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "ioredis": "^5.8.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.1"
   },

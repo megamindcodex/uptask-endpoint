@@ -1,6 +1,7 @@
 // Logic to login a user in the database 
 import User from "../../models/user.js";
 import { createAccessToken } from "../../middleware/jwtAuth.js";
+import { addEmailJob } from "../../queues/emailQueue.js";
 
 export const loginUser = async (req, res) => {
     try {
@@ -32,6 +33,12 @@ export const loginUser = async (req, res) => {
 
         console.log(`✅ User ${user.email} just logged in:`);
 
+        await addEmailJob("send-login-email",
+            {
+                from: "noreply.uptask@sendgrid.com",
+                to: user.email,
+                message: "Account login detected from a different device. is this you?"
+            })
         // res.setHeader("Authorization", accessToken); // for some reason this is not working, so i will send token in response body and come to fix this later
         res.status(200).json({ message: "Login successful", accessToken, user });
 

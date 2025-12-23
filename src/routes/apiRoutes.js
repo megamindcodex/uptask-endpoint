@@ -1,6 +1,7 @@
 // Routes to handle API requests related to users and tasks
 import express from "express";
 import { verifyAccessToken } from "../middleware/jwtAuth.js";
+import { getAllUsers } from "../controllers/api/getAllUser.js";
 import { getUserData } from "../controllers/api/getUser.js";
 import { getTaskCollection } from "../controllers/api/getTaskCollection.js";
 import {
@@ -20,6 +21,10 @@ import {
 
 const router = express.Router();
 
+// Route to Fetch All users in the dataBase
+router.get("/get-all-users", getAllUsers)
+
+
 // Route to fetch user data
 router.get("/get-user-data", verifyAccessToken, getUserData);
 
@@ -28,7 +33,7 @@ router.get("/get-user-data", verifyAccessToken, getUserData);
 router.get("/get-all-collections", verifyAccessToken, get_all_colletions);
 
 // Route to fetch user's task collection
-router.get("/get-task-collection", verifyAccessToken, getTaskCollection);
+// router.get("/get-task-collection", verifyAccessToken, getTaskCollection);
 
 // Route to create a new task collection for a user
 router.post("/create-new-collection", verifyAccessToken, createNewCollection);

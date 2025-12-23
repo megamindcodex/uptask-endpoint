@@ -53,6 +53,7 @@ export const createUser = async (req, res) => {
 
         // res.setHeader("Authorization", accessToken);  // for some reason this is not working, so i will send token in response body and come to fix this later
         res.status(201).json({ message: "account Resgistered successfully", accessToken, newUser });
+        return
 
     } catch (err) {
         console.error("❌ Error creating user:", err);
